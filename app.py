@@ -1,22 +1,27 @@
-from flask import Flask, jsonify, request
-import json
-import random
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
+import json
+import os
+import random
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS
 
-# Enable CORS
-CORS(app)
+# Dynamic file path for laptops_data.json
+DATA_FILE = os.path.join(os.path.dirname(__file__), 'laptops_data.json')
 
 # Load laptop data from the JSON file
-with open('laptops_data.json', 'r') as file:
-    laptops_data = json.load(file)
+try:
+    with open(DATA_FILE, 'r') as file:
+        laptops_data = json.load(file)
+except FileNotFoundError:
+    laptops_data = []
+    print(f"Error: {DATA_FILE} not found.")
 
-# Helper function to filter data based on parameters
+# Helper function to filter laptops based on parameters
 def filter_laptops(data, filters):
     filtered_data = data
 
-    # Apply filters based on the provided parameters
     if 'category' in filters:
         filtered_data = [laptop for laptop in filtered_data if filters['category'].lower() in laptop['Category'].lower()]
 
@@ -24,36 +29,47 @@ def filter_laptops(data, filters):
         filtered_data = [laptop for laptop in filtered_data if filters['source'].lower() in laptop['Source'].lower()]
 
     if 'price_less_than' in filters:
-        filtered_data = [laptop for laptop in filtered_data if float(laptop['Price'].replace(',', '').replace('₹', '').strip()) < float(filters['price_less_than'])]
+        try:
+            filtered_data = [laptop for laptop in filtered_data if float(laptop['Price'].replace(',', '').replace('₹', '').strip()) < float(filters['price_less_than'])]
+        except ValueError:
+            pass
 
     if 'price_greater_than' in filters:
-        filtered_data = [laptop for laptop in filtered_data if float(laptop['Price'].replace(',', '').replace('₹', '').strip()) > float(filters['price_greater_than'])]
+        try:
+            filtered_data = [laptop for laptop in filtered_data if float(laptop['Price'].replace(',', '').replace('₹', '').strip()) > float(filters['price_greater_than'])]
+        except ValueError:
+            pass
 
     if 'rating_greater_than' in filters:
-        filtered_data = [laptop for laptop in filtered_data if float(laptop['Rating'].split()[0]) > float(filters['rating_greater_than'])]
+        try:
+            filtered_data = [laptop for laptop in filtered_data if float(laptop['Rating'].split()[0]) > float(filters['rating_greater_than'])]
+        except ValueError:
+            pass
 
     if 'rating_less_than' in filters:
-        filtered_data = [laptop for laptop in filtered_data if float(laptop['Rating'].split()[0]) < float(filters['rating_less_than'])]
+        try:
+            filtered_data = [laptop for laptop in filtered_data if float(laptop['Rating'].split()[0]) < float(filters['rating_less_than'])]
+        except ValueError:
+            pass
 
     if 'deal' in filters:
         filtered_data = [laptop for laptop in filtered_data if filters['deal'].lower() in laptop['Deal Available'].lower()]
 
-    # Apply limit filter
     if 'limit' in filters:
         try:
             limit = int(filters['limit'])
             filtered_data = filtered_data[:limit]
         except ValueError:
-            pass  # If invalid value, return as is
+            pass
 
     return filtered_data
 
-# Route for the home page (UI/UX with guide)
+# Route for the home page with modern guide
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Route to get all laptop data
+# Route to get all laptops with filtering
 @app.route('/laptops', methods=['GET'])
 def get_laptops():
     filters = request.args
