@@ -78,7 +78,7 @@ GET https://lappyapi.vercel.app/laptops?category=gaming&price_less_than=100000
 **Endpoint**: `GET /laptops?source={source}&rating_greater_than={rating}`  
 **Description**: Filter laptops by source and rating.
 
-GET https://lappyapi.vercel.app/laptops?source=flipkart&rating_greater_than=4
+GET https://lappyapi.vercel.app/laptops?source=amazon&rating_greater_than=4
 
 
 ### 3. Deals + Limit
