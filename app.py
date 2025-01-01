@@ -18,6 +18,14 @@ except FileNotFoundError:
     laptops_data = []
     print(f"Error: {DATA_FILE} not found.")
 
+# Helper function to parse price
+def parse_price(price_str):
+    """Convert price string to a float."""
+    try:
+        return float(price_str.replace(',', '').strip())
+    except ValueError:
+        return None  # Return None if the price cannot be parsed
+
 # Helper function to filter laptops based on parameters
 def filter_laptops(data, filters):
     filtered_data = data
@@ -30,13 +38,15 @@ def filter_laptops(data, filters):
 
     if 'price_less_than' in filters:
         try:
-            filtered_data = [laptop for laptop in filtered_data if float(laptop['Price'].replace(',', '').replace('₹', '').strip()) < float(filters['price_less_than'])]
+            max_price = float(filters['price_less_than'])
+            filtered_data = [laptop for laptop in filtered_data if parse_price(laptop['Price']) and parse_price(laptop['Price']) < max_price]
         except ValueError:
             pass
 
     if 'price_greater_than' in filters:
         try:
-            filtered_data = [laptop for laptop in filtered_data if float(laptop['Price'].replace(',', '').replace('₹', '').strip()) > float(filters['price_greater_than'])]
+            min_price = float(filters['price_greater_than'])
+            filtered_data = [laptop for laptop in filtered_data if parse_price(laptop['Price']) and parse_price(laptop['Price']) > min_price]
         except ValueError:
             pass
 
