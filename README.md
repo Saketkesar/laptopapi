@@ -1,6 +1,6 @@
-# Laptop API Guide
+# Laptop API Guide {Lappy API}
 
-Welcome to the **Laptop Data API**! This API provides laptop data, including categories, sources, prices, ratings, and more. You can filter the data using various parameters.
+Welcome to the **Laptop Data API {Lappy APi}**! This API provides laptop data, including categories, sources, prices, ratings, and more. You can filter the data using various parameters.
 
 ## API Base URL
 
