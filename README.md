@@ -95,6 +95,6 @@ GET https://lappyapi.vercel.app/laptops?deal=yes&limit=5
 GET https://lappyapi.vercel.app/laptops?rating_greater_than=4&price_less_than=80000&category=office
 
 
-## Footer
+
 
 Made with ❤️ by Saket Kesar
